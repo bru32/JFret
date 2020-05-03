@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<style>
+  body {font-family: Consolas;}
+  canvas {border:1px dashed #777;}
+</style>
+<title>fretboard</title>
+</head>
+<body>
+<canvas id="canvas" width="1285" height="233">
+  Browser does not support the canvas tag!
+</canvas>
+<p id="pos"></p>
+<script>
+  var canvas = document.getElementById("canvas");
+  canvas.width = canvas.scrollWidth;
+  canvas.height = canvas.scrollHeight;
+  var ctx = canvas.getContext("2d");
+  var Width = canvas.width;
+  var Height = canvas.height;
+
+  function showNote(p) {
+    const notes = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']; // preferred note names
+    const osn = [4, 9, 2, 7, 11, 4]; // open string notes
+    const str_y = [176, 150, 122, 96, 70, 43]; // y-position of string
+    const fret = [67, 175, 278, 375, 470, 558, 646, 726, 804, 877, 949, 1016, 1081, 1140, 1199, 1253]; // x-position of fret
+    // convert position p.x and p,y to note
+    var i, min_i, note, fret_found, gap, mingap;
+    
+    // loop through all strings and calculate the gap between the mouse
+    // y-position and the string.  The one with the minimum gap is the
+    // closest string.
+    mingap = Number.MAX_VALUE;
+    for(i=0; i<=5; i++) {
+      gap = Math.abs(p.y - str_y[i]);
+      if(gap < mingap) {
+        mingap = gap;
+        min_i = i;
+      }
+    }
+    
+    // start at the nut and loop up the fretboard
+    // as soon as the mouse x position is greater than the fret, 
+    // you have the fret position.
+    for(i=0; i<=15; i++) {
+      if(p.x < fret[i]) {
+        fret_found = i;
+        break;
+      }
+    }
+    
+    // calculate the note from min_i and fret_found.
+    note = notes[(osn[min_i] + fret_found) % 12];
+
+    document.getElementById("pos").innerHTML = `String: ${6-min_i} Fret: ${fret_found} Note: <span style="color:green; font-size:60pt;"> ${note} </span> `;
+  }
+
+  function getMousePos(canvas, evt) {
+    var R = canvas.getBoundingClientRect();
+    return {x: evt.clientX-R.left, y: evt.clientY-R.top};
+  }
+
+  // add a listener for read the mouse position
+  canvas.addEventListener('mousemove', function(evt) {showNote(getMousePos(canvas, evt));}, false);
+
+  var img = new Image();
+  img.src = 'fretbrd.bmp';
+  img.onload = () => {ctx.drawImage(img,0,0)};
+</script>
+</body>
+</html>
