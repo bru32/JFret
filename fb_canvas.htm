@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>fret</title>
+  <style>
+    body {margin: 0px; padding: 0px;}
+  </style>  
+</head>
+<body>
+  <canvas id="canvas" width="1200" height="300">
+    Browser does not support the canvas tag!
+  </canvas>
+  <script>
+    var canvas = document.getElementById("canvas");
+    canvas.width = canvas.scrollWidth;
+    canvas.height = canvas.scrollHeight;
+    var ctx = canvas.getContext("2d");
+    var Width = canvas.width;
+    var Height = canvas.height;
+
+    let tau = 2 * Math.PI;
+    let x, y, i;
+    let fbWidth = 660;
+    let fbHeight = 155;
+    let note_rad = 10;
+    let dot_rad = 9;
+    let x0 = 55;
+    let y0 = 40;
+    let dx = 40; // fret gap
+    let dy = 25; // string gap
+    let xnut = 10; // distance to nut
+    let y1 = 15; // distance to string 1
+    let xofs, yofs;
+
+    // draw fretboard
+    ctx.beginPath();
+    ctx.rect(x0, y0, fbWidth, fbHeight);
+    ctx.fillStyle = 'rgba(237,234,185,0.5)';
+    ctx.fill();
+    ctx.lineWidth = 0.32;
+    ctx.strokeStyle = 'lightgrey';
+    ctx.stroke();
+
+    // draw inlay dots
+    // single dots on 3,5,7 and 9th fret
+    x = x0 + xnut + 5 * dx / 2;
+    ctx.fillStyle = 'rgba(120,120,120,0.16)';
+    ctx.beginPath();
+    for (i=0; i<4; i++) {
+      ctx.arc(x, y0 + y1 + 5 * dy / 2, dot_rad, 0, tau);
+      x += 2 * dx;
+    }
+    ctx.fill();
+    // double dot on 12th fret
+    ctx.beginPath();
+    x += dx;
+    ctx.arc(x, y0 + y1 + 3 * dy / 2, dot_rad, 0, tau);
+    ctx.arc(x, y0 + y1 + 7 * dy / 2, dot_rad, 0, tau);
+    ctx.fill();
+    // dots above the 12th fret
+    ctx.beginPath();
+    x += 3 * dx;
+    ctx.arc(x, y0 + y1 + 5 * dy / 2, dot_rad, 0, tau);
+    ctx.fill();
+
+    // draw frets
+    x = x0 + xnut;
+    ctx.beginPath();
+    ctx.lineWidth = 0.6;
+    ctx.strokeStyle = 'black';
+    for (i = 0; i < 17; i++) {
+      ctx.moveTo(x, y0);
+      ctx.lineTo(x, y0 + fbHeight);
+      x += dx; 
+    }
+    ctx.stroke();
+
+    // draw strings
+    x = x0;
+    y = y0 + y1;
+    ctx.beginPath();
+    ctx.lineWidth = 0.32;
+    ctx.strokeStyle = 'black';
+    for (i = 0; i < 6; i++) {
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + fbWidth, y);
+      y += dy; 
+    }
+    ctx.stroke();
+
+    // write fret numbers
+    ctx.font = "12px Arial";
+    x = x0 + xnut + dx / 2 - ctx.measureText('24').width / 2;
+    ctx.fillStyle = 'rgba(128, 6, 9, 0.6)';
+    for (i = 0; i < 16; i++) {
+      ctx.fillText(i+1, x, y0 + y1 + 6 * dy + 7);
+      x += 40;
+    }
+    
+    // write string names
+    xofs = -40;
+    yofs = -5;
+    ctx.fillStyle = 'rgba(128, 6, 9, 0.6)';
+    ctx.font = "12px Arial";
+    ctx.fillText('E', x0 + xofs, y0 + 1 * dy + yofs);
+    ctx.fillText('B', x0 + xofs, y0 + 2 * dy + yofs);
+    ctx.fillText('G', x0 + xofs, y0 + 3 * dy + yofs);
+    ctx.fillText('D', x0 + xofs, y0 + 4 * dy + yofs);
+    ctx.fillText('A', x0 + xofs, y0 + 5 * dy + yofs);
+    ctx.fillText('E', x0 + xofs, y0 + 6 * dy + yofs);
+
+    function fromFret(i) {
+      let x = x0 + xnut + dx / 2 + (i - 1) * dx;
+      return x;
+    }
+
+    function fromStr(j) {
+      let y = y0 + y1 + (j - 1) * dy;
+      return y;
+    }
+
+    function fromKey(k) {
+      let c = 30 * k;
+      return c;
+    }
+
+    function drawNote(fret, str, key, label) {
+      let x = fromFret(fret);
+      let y = fromStr(str);
+      let c = fromKey(key);
+      ctx.beginPath();
+      ctx.lineWidth = 0.9;
+      ctx.strokeStyle = 'black';
+      ctx.fillStyle = 'hsla('+c+', 100%, 50%, 0.3)';
+      ctx.arc(x, y, note_rad, 0, tau);
+      ctx.stroke();
+      ctx.fill();
+      ctx.font = "11px Arial";
+      ctx.fillStyle = 'black';
+      ctx.fillText(label, x - ctx.measureText(label).width / 2, y + ctx.measureText(label).actualBoundingBoxAscent / 2);
+    }
+
+    // draw house of blues
+    ctx.beginPath();
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = 'hsla(124, 35%, 80%, 0.6)';
+    ctx.moveTo(x0+xnut+dx/2+8*dx, y0+y1+2*dy);
+    ctx.lineTo(x0+xnut+dx/2+9*dx, y0+y1+dy);
+    ctx.lineTo(x0+xnut+dx/2+9*dx, y0+y1);
+    ctx.lineTo(x0+xnut+dx/2+7*dx, y0+y1);
+    ctx.lineTo(x0+xnut+dx/2+7*dx, y0+y1+dy);
+    ctx.lineTo(x0+xnut+dx/2+8*dx, y0+y1+2*dy);
+    ctx.moveTo(x0+xnut+dx/2+9*dx, y0+y1+dy);
+    ctx.lineTo(x0+xnut+dx/2+7*dx, y0+y1+dy);
+    ctx.stroke();
+
+    // draw notes of A min pentatonic
+    drawNote(5, 6, 0, 'R');
+    drawNote(12, 5, 0, 'R');
+    drawNote(0, 5, 0, 'R');
+    drawNote(7, 4, 0, 'R');
+    drawNote(2, 3, 0, 'R');
+    drawNote(14, 3, 0, 'R');
+    drawNote(10, 2, 0, 'R');
+    drawNote(5, 1, 0, 'R');
+    drawNote(8, 6, 2, 'b3');
+    drawNote(3, 5, 2, 'b3');
+    drawNote(10, 4, 2, 'b3');
+    drawNote(1, 2, 2, 'b3');
+    drawNote(13, 2, 2, 'b3');
+    drawNote(5, 3, 2, 'b3');
+    drawNote(8, 1, 2, 'b3');
+    drawNote(15, 5, 2, 'b3');
+    drawNote(5, 5, 5, '4');
+    drawNote(7, 3, 5, '4');
+    drawNote(10, 6, 5, '4');
+    drawNote(0, 4, 5, '4');
+    drawNote(12, 4, 5, '4');
+    drawNote(3, 2, 5, '4');
+    drawNote(15, 2, 5, '4');
+    drawNote(10, 1, 5, '4');
+    drawNote(7, 5, 7, '5');
+    drawNote(5, 2, 7, '5');
+    drawNote(0, 6, 7, '5');
+    drawNote(12, 6, 7, '5');
+    drawNote(2, 4, 7, '5');
+    drawNote(14, 4, 7, '5');
+    drawNote(0, 1, 7, '5');
+    drawNote(12, 1, 7, '5');
+    drawNote(9, 3, 7, '5');
+    drawNote(5, 4, 10, 'b7');
+    drawNote(8, 2, 10, 'b7');
+    drawNote(3, 6, 10, 'b7');
+    drawNote(15, 6, 10, 'b7');
+    drawNote(10, 5, 10, 'b7');
+    drawNote(12, 3, 10, 'b7');
+    drawNote(3, 1, 10, 'b7');
+    drawNote(15, 1, 10, 'b7');
+    drawNote(0, 3, 10, 'b7');
+    drawNote(11, 3, 6, '6');
+    drawNote(12, 2, 2, '9');
+  </script>    
+</body>
+</html>
