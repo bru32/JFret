@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    canvas {border: 1px dotted rgb(98, 158, 123);}
+  </style>
+</head>
+<body>
+<h2> &lt; Circle of 5ths &gt; </h2>
+<canvas id="canvas" width=600 height=400>
+  Canvas not supported!
+</canvas>
+<script>
+  var canvas = document.getElementById("canvas");
+  
+  canvas.width = canvas.scrollWidth;
+  canvas.height = canvas.scrollHeight;
+  
+  var ctx = canvas.getContext("2d");
+  
+  var Width = canvas.width;
+  var Height = canvas.height;
+
+  var tau = 2 * Math.PI;
+  let x0 = Width / 2;
+  let y0 = Height / 2;
+  let rad = 150;
+  let al = tau / 12;
+  let a, x, y, dx, dy, r;
+  let label;
+
+  // draw circle
+  ctx.beginPath();
+  ctx.arc(x0, y0, rad, 0, tau);
+  ctx.stroke();
+
+  // draw spokes
+  for (i=0; i<12; i++) {
+    a = i * al;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    r = rad - 26;
+    x = x0 + r * Math.cos(a);
+    y = y0 + r * Math.sin(a);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+  }
+
+  // draw labels
+  let labels = ['A','E','B','F#','C#','Ab','Eb','Bb','F','C','G','D'];
+  ctx.font = "32px Consolas";
+  
+  for (i=0; i<12; i++) {
+    a = i * al;
+    x = x0 + rad * Math.cos(a);
+    y = y0 + rad * Math.sin(a);
+
+    // bounding circle
+    ctx.beginPath();
+    ctx.fillStyle = 'lightyellow';
+    ctx.arc(x, y, 24, 0, tau);
+    ctx.stroke();
+    ctx.fill();
+
+    label = labels[i];
+    dx = ctx.measureText(label).width / 2;
+    dy = ctx.measureText(label).actualBoundingBoxAscent / 2;
+    ctx.fillStyle = "red";
+    ctx.fillText(label, x - dx, y + dy);    
+  }
+</script>
+
+</body>
+</html>
