@@ -8,3 +8,7 @@ Loads a background image and uses the mouse move event to interpret the note.
 
 ![GitHub Logo](/fretbrd2.bmp)
 
+
+This is not a complete program. It's my initial attempt with JavaScript and the HTML5 canvas. 
+The main part here is the actual mouse position.  This can be seen in the showNote function.
+
