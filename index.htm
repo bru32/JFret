@@ -23,9 +23,10 @@
 
   function showNote(p) {
     const notes = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']; // preferred note names
-    const osn = [4, 9, 2, 7, 11, 4]; // open string notes
-    const str_y = [176, 150, 122, 96, 70, 43]; // y-position of string
-    const fret = [67, 175, 278, 375, 470, 558, 646, 726, 804, 877, 949, 1016, 1081, 1140, 1199, 1253]; // x-position of fret
+    const osn = [4, 9, 2, 7, 11, 4]; // open string note index
+    const str_y = [176, 150, 122, 96, 70, 43]; // y-position of string from drawing
+    const fret = [67, 175, 278, 375, 470, 558, 646, 726, 804, 
+       877, 949, 1016, 1081, 1140, 1199, 1253]; // x-position of fret from drawing
     // convert position p.x and p,y to note
     var i, min_i, note, fret_found, gap, mingap;
     
@@ -66,7 +67,7 @@
   canvas.addEventListener('mousemove', function(evt) {showNote(getMousePos(canvas, evt));}, false);
 
   var img = new Image();
-  img.src = 'fretbrd.bmp';
+  img.src = 'fretbrd2.bmp';
   img.onload = () => {ctx.drawImage(img,0,0)};
 </script>
 </body>

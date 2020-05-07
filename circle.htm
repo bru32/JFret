@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>circ</title>
+</head>
+<body>
+<canvas id="canvas" width=600 height=400>
+  Canvas not supported!
+</canvas>
+<script>
+  drawCircle = (ctx, x, y, rad, fillStyle) => {
+    ctx.beginPath();
+    ctx.arc(x, y, rad, 0, tau);
+    ctx.stroke();
+    if (fillStyle) {
+      ctx.fillStyle = fillStyle;
+      ctx.fill();
+    }
+  }
+  drawLine = (ctx, x0, y0, x1, y1) => {
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+  }
+  FSINCOS = (a) => {return [Math.sin(a), Math.cos(a)];};
+  var canvas = document.getElementById("canvas");
+  canvas.width = canvas.scrollWidth;
+  canvas.height = canvas.scrollHeight;
+  var ctx = canvas.getContext("2d");
+  var Width = canvas.width;
+  var Height = canvas.height;
+  var tau = 2 * Math.PI;
+  // centre of canvas
+  let x0 = Width / 2;
+  let y0 = Height / 2;
+  let rad = 150;
+  let al = tau / 12; // step angle
+  let a, x, y, dx, dy, r, sina, cosa;
+  //let labels = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+  let labels = ['R','b2','2','b3','3','4','b5','5','#5/b6','6','b7','7'];
+  // draw circle
+  drawCircle(ctx, x0, y0, rad);
+  // draw 12 spokes
+  for (i = 0; i < 12; i++) {
+    a = (i-3) * al;
+    r = rad;
+    [sina, cosa] = FSINCOS(a);
+    x = x0 + r * cosa;
+    y = y0 + r * sina;
+    drawLine(ctx, x0, y0, x, y);
+    // change color based on angle steps
+    let fillStyle = "hsla("+ i*30 +", 90%, 72%, 1)";
+    drawCircle(ctx, x, y, 30, fillStyle);
+    // write text
+    ctx.font = "20px Arial";
+    ctx.fillStyle = 'black';
+    dx = ctx.measureText(labels[i]).width / 2;
+    dy = parseInt(ctx.font.match(/\d+/), 10) / 2;
+    ctx.fillText(labels[i], x-dx, y+dy);
+  }
+</script>
+</body>
+</html>
