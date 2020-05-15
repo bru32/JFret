@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta author="Bruce Wernick" company="TechniSolve">
 <style>
   body {font-family: Consolas;}
   canvas {border:1px dashed rgb(232, 238, 226);}
   #copyrite {font-size: small; font-style: italic; color:rgb(152, 190, 126)}
+  #root {font-size: xx-large; color: crimson; font-weight: bold;}
 </style>
 <title>fretboard</title>
 <script src="pixi.js"></script>
@@ -16,8 +18,8 @@
 <canvas id="canvas" width="1285" height="233">
   Browser does not support the canvas tag!
 </canvas>
-<p>Show all the relative notes based on the position of any root note.
-  You move the cursor to the root note of any chord to find good scale notes.
+<p>Shows all notes relative to <span id="root">...</span> root.</p>
+<p>Move the cursor over the fretboard to change the root note.
   This is more of a fretboard trainer than anything for realtime use.</p>
 <p id="copyrite">Copyright&nbsp;&copy;&nbsp;(2020)&nbsp;Bruce Wernick&nbsp;&nbsp;All rights reserved...</p>
 <script>
@@ -68,6 +70,7 @@
     
     // calculate the note from min_i and fret_found.
     note = notes[(osn[min_i] + fret_found) % 12];
+    document.getElementById("root").innerHTML = note;
 
     // First, draw the background fretboard image.
     //ctx.save();
@@ -90,7 +93,7 @@
         // the actual note depends on (fret_found, string_found)
         k = (i - fret_found) + 5 * (string_found - (6-j));
         if (j >= 4) k -= 1; // adjust for note shift
-        if (string_found <= 2) k += 1; // position back for found string
+        if (string_found <= 2) k += 1; // position back is found_string <= 2.
         k = (k + 144) % 12;
         s = good_rel_notes[k];
 
@@ -109,17 +112,22 @@
     }
   }
 
-  function getMousePos(canvas, evt) {
+  getMousePos = (canvas, evt) => {
     var R = canvas.getBoundingClientRect();
     return {x: evt.clientX-R.left, y: evt.clientY-R.top};
   }
 
-  // add a listeners for mouse position
+  doMouseLeave = (evt) => {
+    ctx.drawImage(img,0,0);
+    document.getElementById("root").innerHTML = '...';
+  }
+
+  // add a listeners for mouse
   canvas.addEventListener('mousemove', function(evt) {showNote(getMousePos(canvas, evt));}, false);
-  canvas.addEventListener('mouseleave', function(evt) {ctx.drawImage(img,0,0)}, false);
+  canvas.addEventListener('mouseleave', function(evt) {doMouseLeave(evt)}, false);
 
   var img = new Image();
-  img.src = 'fretbrd3.bmp';
+  img.src = 'fretbrd3.bmp'; // light drawing background so we can write text over
   img.onload = () => {ctx.drawImage(img,0,0)};
 </script>
 </body>
