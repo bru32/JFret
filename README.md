@@ -1,4 +1,4 @@
-# JFret
+# JFret 1.0.0.0
 
 Simple guitar fretboard reader.
 
@@ -17,6 +17,7 @@ The tool notes.htm is a web page that show all the relative notes of the cursor 
 ![GitHub Logo](/fretbrd4.png)
 
 
+---
 Bruce Wernick
 
 ![GitHub Logo](/seventh_chord_4.png)![GitHub Logo](/seventh_chord_5.png)![GitHub Logo](/seventh_chord_6.png)
