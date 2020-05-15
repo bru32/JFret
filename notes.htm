@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {font-family: Consolas;}
+  canvas {border:1px dashed rgb(232, 238, 226);}
+  #copyrite {font-size: small; font-style: italic; color:rgb(152, 190, 126)}
+</style>
+<title>fretboard</title>
+<script src="pixi.js"></script>
+</head>
+<body>
+<h2>&lt; Reactive fretboard &gt;</h2>
+<canvas id="canvas" width="1285" height="233">
+  Browser does not support the canvas tag!
+</canvas>
+<p>Show all the relative notes based on the position of any root note.
+  You move the cursor to the root note of any chord to find good scale notes.
+  This is more of a fretboard trainer than anything for realtime use.</p>
+<p id="copyrite">Copyright&nbsp;&copy;&nbsp;(2020)&nbsp;Bruce Wernick&nbsp;&nbsp;All rights reserved...</p>
+<script>
+  var canvas = document.getElementById("canvas");
+  canvas.width = canvas.scrollWidth;
+  canvas.height = canvas.scrollHeight;
+  var ctx = canvas.getContext("2d");
+  var Width = canvas.width;
+  var Height = canvas.height;
+
+  function showNote(p) {
+    const rel_notes = ['R', 'b2', '2', 'b3', '3', '4', 'b5', '5', '#5', '6', 'b7', '7']; // relative notes
+    const good_rel_notes = ['R', '', '9', 'b3', '3', '4', 'b5', '5', '', '6', 'b7', '']; // good rel notes
+    const rel_idx = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']; // note index numbers
+    const notes = ['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']; // preferred note names
+    const osn = [4, 9, 2, 7, 11, 4]; // open string note index
+    const str_y = [176, 150, 122, 96, 70, 43]; // y-position of string from drawing
+    const fret = [67, 175, 278, 375, 470, 558, 646, 726, 804, 
+       877, 949, 1016, 1081, 1140, 1199, 1253]; // x-position of fret from drawing
+    // convert position p.x and p,y to note
+    var i, min_i, note, fret_found, gap, mingap, string_found;
+    var x, y, s, k, j, h;
+    var font_height, font_width;
+    var fret0;
+    
+    // loop through all strings and calculate the gap between the mouse
+    // y-position and the string.  The one with the minimum gap is the
+    // closest string.
+    mingap = Number.MAX_VALUE;
+    for(i=0; i<=5; i++) {
+      gap = Math.abs(p.y - str_y[i]);
+      if(gap < mingap) {
+        mingap = gap;
+        min_i = i;
+      }
+    }
+    string_found = 6 - min_i;
+
+    // start at the nut and loop up the fretboard
+    // as soon as the mouse x position is greater than the fret, 
+    // you have the fret position.
+    for(i=0; i<=15; i++) {
+      if(p.x < fret[i]) {
+        fret_found = i;
+        break;
+      }
+    }
+    
+    // calculate the note from min_i and fret_found.
+    note = notes[(osn[min_i] + fret_found) % 12];
+
+    // First, draw the background fretboard image.
+    //ctx.save();
+    //ctx.globalAlpha = 0.1;
+    ctx.drawImage(img, 0, 0);
+    //ctx.restore();
+
+    // set font for note labels
+    ctx.font = 'italic 30px Consolas';
+    font_height = determineFontHeight(ctx.font);
+
+    // write all relative notes on fretboard with
+    // the root at the mouse position.
+    for (j=0; j<6; j++) {
+      // loop through strings
+      
+      for (i=0; i<16; i++) {
+        // loop through frets
+
+        // the actual note depends on (fret_found, string_found)
+        k = (i - fret_found) + 5 * (string_found - (6-j));
+        if (j >= 4) k -= 1; // adjust for note shift
+        if (string_found <= 2) k += 1; // position back for found string
+        k = (k + 144) % 12;
+        s = good_rel_notes[k];
+
+        // adjust for font width
+        font_width = ctx.measureText(s).width;
+        fret0 = (i > 0) ? fret[i-1] : 0;
+        x = (fret[i] + fret0 - font_width) / 2;
+
+        // adjust y to place text centrally over string
+        y = str_y[j] + font_height / 2;
+
+        // finally, write the text (with hue according to note)
+        ctx.fillStyle = 'hsla(' + 30*k + ', 50%, 50%, 0.72)';
+        ctx.fillText(s, x, y);
+      }
+    }
+  }
+
+  function getMousePos(canvas, evt) {
+    var R = canvas.getBoundingClientRect();
+    return {x: evt.clientX-R.left, y: evt.clientY-R.top};
+  }
+
+  // add a listeners for mouse position
+  canvas.addEventListener('mousemove', function(evt) {showNote(getMousePos(canvas, evt));}, false);
+  canvas.addEventListener('mouseleave', function(evt) {ctx.drawImage(img,0,0)}, false);
+
+  var img = new Image();
+  img.src = 'fretbrd3.bmp';
+  img.onload = () => {ctx.drawImage(img,0,0)};
+</script>
+</body>
+</html>
