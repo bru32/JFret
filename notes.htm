@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+JFret 1.0.0.0
+JavaScript Fretboard trainer.
+Bruce Wernick
+15 May 2020
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,11 +12,12 @@
   <meta author="Bruce Wernick" company="TechniSolve">
 <style>
   body {font-family: Consolas;}
+  h2 {color: rgb(107, 139, 124);}
   canvas {border:1px dashed rgb(232, 238, 226);}
   #copyrite {font-size: small; font-style: italic; color:rgb(152, 190, 126)}
   #root {font-size: xx-large; color: crimson; font-weight: bold;}
 </style>
-<title>fretboard</title>
+<title>JFret 1.0.0.0</title>
 <script src="pixi.js"></script>
 </head>
 <body>
@@ -21,6 +28,12 @@
 <p>Shows all notes relative to <span id="root">...</span> root.</p>
 <p>Move the cursor over the fretboard to change the root note.
   This is more of a fretboard trainer than anything for realtime use.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<img src="guitar.jpg">
+<img src="seventh_chord_4.png">
+<img src="seventh_chord_5.png">
+<img src="seventh_chord_6.png">
 <p id="copyrite">Copyright&nbsp;&copy;&nbsp;(2020)&nbsp;Bruce Wernick&nbsp;&nbsp;All rights reserved...</p>
 <script>
   var canvas = document.getElementById("canvas");
